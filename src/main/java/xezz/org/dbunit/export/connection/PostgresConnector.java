@@ -35,7 +35,34 @@ class PostgresConnector implements DatabaseConnector {
         this.userName = userName;
     }
 
-    PostgresConnector() {}
+    PostgresConnector() {
+    }
+
+    @Override
+    public Connection buildConnection() throws ClassNotFoundException, SQLException {
+        Class.forName("org.postgresql.Driver");
+        StringBuilder sb = new StringBuilder(urlPrefix);
+        // StringBuilder appends null if a given string is null, so only add it if its not null!
+        if (host != null) {
+            sb.append(host);
+            sb.append("/");
+        }
+        if (schemaName != null) {
+            sb.append(schemaName);
+        }
+        if (userName != null) {
+            properties.setProperty(USERNAME_PROPERTY, userName);
+        }
+        if (password != null) {
+            properties.setProperty(PASSWORD_PROPERTY, password);
+        }
+        return DriverManager.getConnection(sb.toString(), properties);
+    }
+
+    @Override
+    public void setCustomProperties(Properties customProperties) {
+        this.properties = customProperties;
+    }
 
     String getUserName() {
         return userName;
@@ -76,31 +103,4 @@ class PostgresConnector implements DatabaseConnector {
     void setProperties(Properties properties) {
         this.properties = properties;
     }
-
-    @Override
-    public void setCustomProperties(Properties customProperties) {
-        this.properties = customProperties;
-    }
-
-    @Override
-    public Connection buildConnection() throws ClassNotFoundException, SQLException {
-        Class.forName("org.postgresql.Driver");
-        StringBuilder sb = new StringBuilder(urlPrefix);
-        // StringBuilder appends null if a given string is null, so only add it if its not null!
-        if (host != null) {
-            sb.append(host);
-            sb.append("/");
-        }
-        if (schemaName != null) {
-            sb.append(schemaName);
-        }
-        if (userName != null) {
-            properties.setProperty(USERNAME_PROPERTY, userName);
-        }
-        if (password != null) {
-            properties.setProperty(PASSWORD_PROPERTY, password);
-        }
-        return DriverManager.getConnection(sb.toString(), properties);
-    }
-
 }

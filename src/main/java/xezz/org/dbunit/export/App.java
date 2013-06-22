@@ -3,7 +3,6 @@ package xezz.org.dbunit.export;
 
 import org.apache.commons.cli.*;
 import org.dbunit.DatabaseUnitException;
-import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSet;
@@ -12,10 +11,7 @@ import xezz.org.dbunit.export.options.PresetOption;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Properties;
 
 /**
  * @author bkoch
@@ -31,7 +27,7 @@ public class App {
         CommandLineParser parser = new BasicParser();
         CommandLine cmd = null;
         try {
-             cmd = parser.parse(options, args);
+            cmd = parser.parse(options, args);
         } catch (ParseException e) {
             System.out.println(e.getMessage());
             new HelpFormatter().printHelp("db-export", options, true);
@@ -56,23 +52,14 @@ public class App {
         try {
             // This would be the driver to use with hsqldb
             //Class driverClass = Class.forName("org.hsqldb.jdbcDriver");
-            Class driverClass = Class.forName("org.postgresql.Driver");
+
 
             // this would be the connection for hsql
             //Connection jdbcConnection = DriverManager.getConnection("jdbc:hsqldb:sample", "sa", "");
-            final String hostName = "localhost";
-            final String schemaName = "timeregdb";
-            final String url = "jdbc:postgresql://" + hostName + "/" + schemaName;
-
-            final String userName = "timereg";
-            final String password = "ec109w";
-
-            final Properties props = new Properties();
-            props.setProperty("user", userName);
-            props.setProperty("password", password);
 
             //Connection jdbcConnection = DriverManager.getConnection(url, props);
-            IDatabaseConnection connection = new DatabaseConnection(ConnectionFactory.getConnection(cmd));
+            IDatabaseConnection connection = ConnectionFactory.getConnection(cmd);
+
             // full database export
             IDataSet fullDataSet = connection.createDataSet();
             FlatXmlDataSet.write(fullDataSet, new FileOutputStream("full.xml"));
@@ -84,7 +71,6 @@ public class App {
             partialDataSet.addTable("BAR");
             FlatXmlDataSet.write(partialDataSet, new FileOutputStream("partial.xml"));
             */
-
 
 
             // dependent tables database export: export table X and all tables that
