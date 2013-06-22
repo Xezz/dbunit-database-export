@@ -1,4 +1,4 @@
-package xezz.org.dbunit.export.connection;
+package org.xezz.dbunit.export.connection;
 
 import org.apache.commons.cli.CommandLine;
 import org.dbunit.DatabaseUnitException;
@@ -6,7 +6,7 @@ import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseConnection;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.ext.postgresql.PostgresqlDataTypeFactory;
-import xezz.org.dbunit.export.options.PresetOption;
+import org.xezz.dbunit.export.options.PresetOption;
 
 import java.sql.SQLException;
 import java.util.ArrayList;

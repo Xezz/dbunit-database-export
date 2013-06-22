@@ -12,11 +12,14 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven-jar-plugin.version>2.3.2</maven-jar-plugin.version>
         <junit.version>4.11</junit.version>
         <dbunit.version>2.4.8</dbunit.version>
         <slf4j-api.version>1.7.5</slf4j-api.version>
         <commons-cli.version>1.2</commons-cli.version>
         <postgresql.version>.1-901.jdbc4</postgresql.version>
+        <maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
+        <maven-jar-plugin.finalName>db-export</maven-jar-plugin.finalName>
     </properties>
 
     <dependencies>
@@ -61,4 +64,54 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                </configuration>
+            </plugin>
+            <!-- === This requires that the dependencies are on the classpath === -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>${maven-jar-plugin.version}</version>
+                <configuration>
+                    <finalName>${maven-jar-plugin.finalName}</finalName>
+                    <archive>
+                        <manifest>
+                            <addClasspath>true</addClasspath>
+                            <mainClass>org.xezz.dbunit.export.App</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+            <!-- === Packages all dependencies inside the .jar === -->
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>org.xezz.dbunit.export.App</mainClass>
+                        </manifest>
+                    </archive>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

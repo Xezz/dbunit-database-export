@@ -1,4 +1,4 @@
-package xezz.org.dbunit.export;
+package org.xezz.dbunit.export;
 
 
 import org.apache.commons.cli.*;
@@ -6,8 +6,10 @@ import org.dbunit.DatabaseUnitException;
 import org.dbunit.database.IDatabaseConnection;
 import org.dbunit.dataset.IDataSet;
 import org.dbunit.dataset.xml.FlatXmlDataSet;
-import xezz.org.dbunit.export.connection.ConnectionFactory;
-import xezz.org.dbunit.export.options.PresetOption;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.xezz.dbunit.export.connection.ConnectionFactory;
+import org.xezz.dbunit.export.options.PresetOption;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -18,39 +20,24 @@ import java.sql.SQLException;
  * @since 14.06.2013
  */
 public class App {
+    final static Logger LOGGER = LoggerFactory.getLogger(App.class);
 
     public static void main(String[] args) {
+
+        LOGGER.warn("Started db-export");
         // Apache commons CLI
         // Create the available options that can be given to the command line
+
         Options options = createOptions();
-
-        CommandLineParser parser = new BasicParser();
-        CommandLine cmd = null;
         try {
+
+            CommandLineParser parser = new BasicParser();
+            CommandLine cmd = null;
+            LOGGER.info("Done building CLI stuff");
             cmd = parser.parse(options, args);
-        } catch (ParseException e) {
-            System.out.println(e.getMessage());
-            new HelpFormatter().printHelp("db-export", options, true);
-            System.exit(-15);
-        }
-
-        final Option[] cmdOptions = cmd.getOptions();
-        final String optionValue = cmd.getOptionValue(PresetOption.DATABASE.getValue());
-        for (Option o : cmdOptions) {
-            System.out.println(o.getOpt() + " : " + o.getValue());
-        }
-        if (cmd.hasOption(PresetOption.DATABASE.getValue())) {
-            System.out.println("option db has been set: " + cmd.getOptionValue(PresetOption.DATABASE.getValue()));
-
-        } else {
-            System.out.println("No db option was given");
-        }
-        //System.exit(0);
-
-
-        // database connection
-        try {
+            LOGGER.info("Done parsing CLI");
             // This would be the driver to use with hsqldb
+            // Keeping here for further reference
             //Class driverClass = Class.forName("org.hsqldb.jdbcDriver");
 
 
@@ -80,20 +67,22 @@ public class App {
             FlatXmlDataSet.write(depDataSet, new FileOutputStream("dependents.xml"));
             */
             connection.close();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            System.exit(-1);
-        } catch (SQLException e) {
-            e.printStackTrace();
-            System.exit(-2);
-        } catch (DatabaseUnitException e) {
-            e.printStackTrace();
-            System.exit(-3);
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.exit(-4);
+        } catch (ParseException e) {
+            LOGGER.info("Malformed commandline input: " + e.getMessage());
+            new HelpFormatter().printHelp("db-export", options, true);
+        } catch (ClassNotFoundException cNFE) {
+            LOGGER.warn("Database Driver was not found: " + cNFE.getMessage());
+        } catch (SQLException sqlE) {
+            LOGGER.warn("SQL Failure: ", sqlE);
+            sqlE.printStackTrace();
+        } catch (DatabaseUnitException dbUE) {
+            LOGGER.warn("DBUnit failed: ", dbUE);
+        } catch (IOException ioe) {
+            LOGGER.warn("IO Operation failed, see log for more detailed error message. Simple cause: " + ioe.getMessage());
+            LOGGER.info("IO failure:", ioe);
+        } catch (Exception e) {
+            LOGGER.warn("MASSIVE FAIL: ", e);
         }
-
     }
 
     private static Options createOptions() {

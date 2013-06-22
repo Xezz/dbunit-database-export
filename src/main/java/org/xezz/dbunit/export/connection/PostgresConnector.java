@@ -1,4 +1,4 @@
-package xezz.org.dbunit.export.connection;
+package org.xezz.dbunit.export.connection;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +40,7 @@ class PostgresConnector implements DatabaseConnector {
 
     @Override
     public Connection buildConnection() throws ClassNotFoundException, SQLException {
+        LOGGER.info("Building connection for Postgres");
         Class.forName("org.postgresql.Driver");
         StringBuilder sb = new StringBuilder(urlPrefix);
         // StringBuilder appends null if a given string is null, so only add it if its not null!
@@ -56,6 +57,7 @@ class PostgresConnector implements DatabaseConnector {
         if (password != null) {
             properties.setProperty(PASSWORD_PROPERTY, password);
         }
+        LOGGER.info("Connection string building done: " + sb.toString());
         return DriverManager.getConnection(sb.toString(), properties);
     }
 

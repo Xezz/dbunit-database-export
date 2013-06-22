@@ -1,4 +1,4 @@
-package xezz.org.dbunit.export.connection;
+package org.xezz.dbunit.export.connection;
 
 /**
  * User: Xezz
