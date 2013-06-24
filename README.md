@@ -10,8 +10,9 @@ This example bases on the information from http://dbunit.sourceforge.net/faq.htm
 and from http://jdbc.postgresql.org/documentation/head/connect.html
 
 ## Adjustments
-You have to adjust the pom.xml if you want to use a different database. Currently it has a dependency to postgresql but you can use all supoprted databases
+You have to adjust the pom.xml if you want to use a different database. Currently it has a dependency to postgresql but you can use all supported databases
 
 ## TODO
     * Use apache commons to make it interactive
     * Support a few more databases
+    * Maybe add more than just pure db-dumps
